@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Search, TrendingUp, BriefcaseBusiness, Buildings } from 'lucide-react';
+import { ArrowRight, Search, TrendingUp, BriefcaseBusiness, Building } from 'lucide-react';
 
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -137,7 +137,7 @@ const Hero = () => {
               <span className="text-sm">10,000+ Jobs Available</span>
             </div>
             <div className="flex items-center text-muted-foreground">
-              <Buildings className="mr-2 h-5 w-5" />
+              <Building className="mr-2 h-5 w-5" />
               <span className="text-sm">500+ Top Companies</span>
             </div>
           </motion.div>
