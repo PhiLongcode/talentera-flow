@@ -3,10 +3,12 @@ import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Search, TrendingUp, BriefcaseBusiness, Building } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const backgroundItemsRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   // Handle parallax mouse effect
   useEffect(() => {
@@ -78,7 +80,7 @@ const Hero = () => {
           >
             <span className="flex items-center">
               <TrendingUp className="w-4 h-4 mr-2" />
-              Discover your perfect career match
+              {t('discoverMatch')}
             </span>
           </motion.div>
           
@@ -88,9 +90,9 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6"
           >
-            <span className="text-gradient">Connect,</span> Grow, 
-            <br className="hidden md:block" /> and 
-            <span className="text-gradient"> Prosper</span>
+            <span className="text-gradient">{t('connect')},</span> {t('grow')}, 
+            <br className="hidden md:block" /> {t('and')} 
+            <span className="text-gradient"> {t('prosper')}</span>
           </motion.h1>
           
           <motion.p
@@ -99,8 +101,7 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-lg md:text-xl text-muted-foreground max-w-3xl mb-10"
           >
-            A revolutionary platform connecting talents with opportunities through
-            the power of blockchain and AI. Secure, transparent, and efficient.
+            {t('revolutionaryPlatform')}
           </motion.p>
           
           <motion.div
@@ -113,7 +114,7 @@ const Hero = () => {
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <input 
                 type="text" 
-                placeholder="Search for jobs, skills, or companies..." 
+                placeholder={t('searchPlaceholder')} 
                 className="w-full bg-transparent py-3 pl-12 pr-4 text-foreground focus:outline-none focus:ring-0 border-none" 
               />
             </div>
@@ -121,7 +122,7 @@ const Hero = () => {
               size="lg" 
               className="rounded-full magnetic-button button-glow flex items-center gap-2 px-6"
             >
-              <span>Search</span>
+              <span>{t('search')}</span>
               <ArrowRight className="w-5 h-5" />
             </Button>
           </motion.div>
@@ -134,11 +135,11 @@ const Hero = () => {
           >
             <div className="flex items-center text-muted-foreground">
               <BriefcaseBusiness className="mr-2 h-5 w-5" />
-              <span className="text-sm">10,000+ Jobs Available</span>
+              <span className="text-sm">{t('jobsAvailable')}</span>
             </div>
             <div className="flex items-center text-muted-foreground">
               <Building className="mr-2 h-5 w-5" />
-              <span className="text-sm">500+ Top Companies</span>
+              <span className="text-sm">{t('topCompanies')}</span>
             </div>
           </motion.div>
         </div>

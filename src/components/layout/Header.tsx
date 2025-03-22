@@ -4,11 +4,14 @@ import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X, Moon, Sun, Search, BriefcaseBusiness, Building, User, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import LanguageToggle from './LanguageToggle';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,10 +45,10 @@ const Header = () => {
   };
 
   const navItems = [
-    { name: 'Home', path: '/', icon: <Search className="w-4 h-4 mr-2" /> },
-    { name: 'Find Jobs', path: '/jobs', icon: <BriefcaseBusiness className="w-4 h-4 mr-2" /> },
-    { name: 'Employers', path: '/employers', icon: <Building className="w-4 h-4 mr-2" /> },
-    { name: 'Post Job', path: '/post-job', icon: <User className="w-4 h-4 mr-2" /> },
+    { name: t('home'), path: '/', icon: <Search className="w-4 h-4 mr-2" /> },
+    { name: t('findJobs'), path: '/jobs', icon: <BriefcaseBusiness className="w-4 h-4 mr-2" /> },
+    { name: t('employers'), path: '/employers', icon: <Building className="w-4 h-4 mr-2" /> },
+    { name: t('postJob'), path: '/post-job', icon: <User className="w-4 h-4 mr-2" /> },
   ];
 
   return (
@@ -84,6 +87,8 @@ const Header = () => {
           </nav>
 
           <div className="hidden md:flex items-center space-x-2">
+            <LanguageToggle />
+            
             <Button 
               variant="ghost" 
               size="icon" 
@@ -109,7 +114,7 @@ const Header = () => {
                 className="flex items-center gap-2 rounded-full hover:bg-secondary"
               >
                 <LogIn className="h-4 w-4" />
-                <span>Sign In</span>
+                <span>{t('signIn')}</span>
               </Button>
             </Link>
             
@@ -117,13 +122,15 @@ const Header = () => {
               <Button 
                 className="rounded-full button-glow"
               >
-                Join Now
+                {t('joinNow')}
               </Button>
             </Link>
           </div>
 
           {/* Mobile menu button */}
           <div className="flex items-center md:hidden gap-2">
+            <LanguageToggle />
+            
             <Button 
               variant="ghost" 
               size="icon" 
@@ -182,7 +189,7 @@ const Header = () => {
                     className="w-full flex items-center justify-center gap-2"
                   >
                     <LogIn className="h-4 w-4" />
-                    <span>Sign In</span>
+                    <span>{t('signIn')}</span>
                   </Button>
                 </Link>
                 <Link 
@@ -191,7 +198,7 @@ const Header = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Button className="w-full button-glow">
-                    Join Now
+                    {t('joinNow')}
                   </Button>
                 </Link>
               </div>

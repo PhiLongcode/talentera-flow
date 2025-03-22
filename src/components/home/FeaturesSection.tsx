@@ -2,31 +2,34 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Shield, Brain, LineChart, Users } from 'lucide-react';
-
-const features = [
-  {
-    icon: <Shield className="h-8 w-8" />,
-    title: 'Secure Blockchain Verification',
-    description: 'Your credentials and experience are securely stored on blockchain, ensuring authenticity and immutability.',
-  },
-  {
-    icon: <Brain className="h-8 w-8" />,
-    title: 'AI-Powered Job Matching',
-    description: 'Our advanced algorithms analyze your skills and preferences to recommend the most suitable opportunities.',
-  },
-  {
-    icon: <LineChart className="h-8 w-8" />,
-    title: 'Data-Driven Insights',
-    description: 'Access real-time market analytics and salary data to make informed career decisions.',
-  },
-  {
-    icon: <Users className="h-8 w-8" />,
-    title: 'Professional Networking',
-    description: 'Connect with industry leaders and peers to expand your professional network and discover new opportunities.',
-  },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const FeaturesSection = () => {
+  const { t } = useLanguage();
+  
+  const features = [
+    {
+      icon: <Shield className="h-8 w-8" />,
+      title: t('secureBlockchain'),
+      description: t('secureBlockchainDesc'),
+    },
+    {
+      icon: <Brain className="h-8 w-8" />,
+      title: t('aiPowered'),
+      description: t('aiPoweredDesc'),
+    },
+    {
+      icon: <LineChart className="h-8 w-8" />,
+      title: t('dataInsights'),
+      description: t('dataInsightsDesc'),
+    },
+    {
+      icon: <Users className="h-8 w-8" />,
+      title: t('networking'),
+      description: t('networkingDesc'),
+    },
+  ];
+
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -59,7 +62,7 @@ const FeaturesSection = () => {
             transition={{ duration: 0.5 }}
             className="text-3xl md:text-4xl font-bold mb-4"
           >
-            Why Choose TalenteraFlow
+            {t('whyChoose')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -68,8 +71,7 @@ const FeaturesSection = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-muted-foreground max-w-2xl mx-auto"
           >
-            Our platform combines cutting-edge technology with intuitive design 
-            to create a seamless recruitment experience.
+            {t('platformCombines')}
           </motion.p>
         </div>
         

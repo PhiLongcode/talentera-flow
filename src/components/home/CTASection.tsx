@@ -3,8 +3,10 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const CTASection = () => {
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -36,7 +38,7 @@ const CTASection = () => {
               transition={{ duration: 0.5 }}
               className="text-3xl md:text-4xl font-bold mb-4"
             >
-              Ready to Transform Your Career Journey?
+              {t('readyTransform')}
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -45,8 +47,7 @@ const CTASection = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto"
             >
-              Join thousands of professionals who have already discovered the power 
-              of blockchain-verified recruitment and AI-powered job matching.
+              {t('joinThousands')}
             </motion.p>
             
             <motion.div
@@ -60,7 +61,7 @@ const CTASection = () => {
                 size="lg" 
                 className="rounded-full magnetic-button button-glow flex items-center gap-2 px-6"
               >
-                <span>Get Started</span>
+                <span>{t('getStarted')}</span>
                 <ArrowRight className="w-5 h-5" />
               </Button>
               <Button 
@@ -68,7 +69,7 @@ const CTASection = () => {
                 size="lg" 
                 className="rounded-full"
               >
-                Learn More
+                {t('learnMore')}
               </Button>
             </motion.div>
           </div>
