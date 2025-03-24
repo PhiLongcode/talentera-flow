@@ -214,6 +214,31 @@ const translations: Translations = {
     en: 'AI assistant has responded to your query',
     vi: 'Trợ lý AI đã trả lời câu hỏi của bạn',
   },
+  // New translations for AI Assistant
+  conversationTopics: {
+    en: 'Conversation Topics',
+    vi: 'Chủ Đề Hội Thoại',
+  },
+  jobPostingTopic: {
+    en: 'Job Posting',
+    vi: 'Đăng Tin Tuyển Dụng',
+  },
+  candidateScreeningTopic: {
+    en: 'Candidate Screening',
+    vi: 'Sàng Lọc Ứng Viên',
+  },
+  interviewTipsTopic: {
+    en: 'Interview Tips',
+    vi: 'Lời Khuyên Phỏng Vấn',
+  },
+  companyProfileTopic: {
+    en: 'Company Profile',
+    vi: 'Hồ Sơ Công Ty',
+  },
+  clearConversation: {
+    en: 'Clear conversation',
+    vi: 'Xóa cuộc trò chuyện',
+  },
 };
 
 // Create the provider component

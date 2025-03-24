@@ -1,7 +1,7 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Briefcase, Building, Users, UserPlus, ChevronRight } from 'lucide-react';
+import { Send, Briefcase, Building, Users, UserPlus, ChevronRight, Bot, Trash2 } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -10,9 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
 
 const Employers = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const [messages, setMessages] = useState<{ role: 'user' | 'ai'; content: string }[]>([
     { role: 'ai', content: t('aiWelcomeMessage') }
@@ -20,6 +21,18 @@ const Employers = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isAiTyping, setIsAiTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showClearButton, setShowClearButton] = useState(false);
+
+  // Selected conversation topic
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  
+  // List of conversation topics
+  const topics = [
+    { id: 'job-posting', icon: Briefcase, name: { en: 'Job Posting', vi: 'Đăng Tin Tuyển Dụng' } },
+    { id: 'candidate-screening', icon: Users, name: { en: 'Candidate Screening', vi: 'Sàng Lọc Ứng Viên' } },
+    { id: 'interview', icon: UserPlus, name: { en: 'Interview Tips', vi: 'Lời Khuyên Phỏng Vấn' } },
+    { id: 'company-profile', icon: Building, name: { en: 'Company Profile', vi: 'Hồ Sơ Công Ty' } },
+  ];
 
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
@@ -29,31 +42,118 @@ const Employers = () => {
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsAiTyping(true);
+    setShowClearButton(true);
     
     // Simulate AI response after a delay
     setTimeout(() => {
-      const aiResponses = {
-        en: [
-          "I can help you create and manage job listings that attract qualified candidates.",
-          "Our AI-powered system can match your job requirements with potential candidates automatically.",
-          "Would you like me to help you write an effective job description?",
-          "I can provide insights on market rates for this position based on current data.",
-          "Let me show you how our platform can streamline your hiring process."
-        ],
-        vi: [
-          "Tôi có thể giúp bạn tạo và quản lý danh sách công việc để thu hút ứng viên phù hợp.",
-          "Hệ thống AI của chúng tôi có thể tự động kết nối yêu cầu công việc với ứng viên tiềm năng.",
-          "Bạn có muốn tôi giúp viết mô tả công việc hiệu quả không?",
-          "Tôi có thể cung cấp thông tin về mức lương thị trường cho vị trí này dựa trên dữ liệu hiện tại.",
-          "Hãy để tôi chỉ cho bạn cách nền tảng của chúng tôi có thể hợp lý hóa quy trình tuyển dụng của bạn."
-        ]
-      };
+      let aiResponseContent = '';
       
-      const { language } = useLanguage();
-      const randomIndex = Math.floor(Math.random() * aiResponses[language].length);
+      // Topic-specific responses based on selected topic
+      if (selectedTopic === 'job-posting') {
+        const jobPostingResponses = {
+          en: [
+            "I can help you create an effective job posting. What position are you looking to fill?",
+            "For an effective job posting, include clear requirements, responsibilities, and company benefits.",
+            "Would you like me to provide a template for your job description?",
+            "Including salary range in job postings can increase application rates by up to 30%.",
+            "What skills are most important for this position?"
+          ],
+          vi: [
+            "Tôi có thể giúp bạn tạo một bài đăng việc làm hiệu quả. Bạn đang tìm kiếm vị trí nào?",
+            "Để có bài đăng việc làm hiệu quả, hãy nêu rõ yêu cầu, trách nhiệm và lợi ích công ty.",
+            "Bạn có muốn tôi cung cấp mẫu cho mô tả công việc của bạn không?",
+            "Việc đưa ra mức lương trong bài đăng việc làm có thể tăng tỷ lệ ứng tuyển lên đến 30%.",
+            "Những kỹ năng nào quan trọng nhất cho vị trí này?"
+          ]
+        };
+        const randomIndex = Math.floor(Math.random() * jobPostingResponses[language].length);
+        aiResponseContent = jobPostingResponses[language][randomIndex];
+      } 
+      else if (selectedTopic === 'candidate-screening') {
+        const screeningResponses = {
+          en: [
+            "What specific qualifications are you looking for in candidates?",
+            "I recommend using a skills assessment test for technical positions.",
+            "Would you like tips on how to efficiently pre-screen resumes?",
+            "Group interviews can be effective for assessing teamwork and communication skills.",
+            "Have you considered using video interviews for initial screening?"
+          ],
+          vi: [
+            "Bạn đang tìm kiếm những trình độ cụ thể nào ở ứng viên?",
+            "Tôi khuyên bạn nên sử dụng bài kiểm tra đánh giá kỹ năng cho các vị trí kỹ thuật.",
+            "Bạn có muốn mẹo về cách sàng lọc sơ bộ hồ sơ một cách hiệu quả không?",
+            "Phỏng vấn nhóm có thể hiệu quả để đánh giá kỹ năng làm việc nhóm và giao tiếp.",
+            "Bạn đã cân nhắc sử dụng phỏng vấn video cho sàng lọc ban đầu chưa?"
+          ]
+        };
+        const randomIndex = Math.floor(Math.random() * screeningResponses[language].length);
+        aiResponseContent = screeningResponses[language][randomIndex];
+      }
+      else if (selectedTopic === 'interview') {
+        const interviewResponses = {
+          en: [
+            "Behavioral questions can help assess how candidates handled past situations.",
+            "Consider using a structured interview process for all candidates.",
+            "Would you like examples of effective interview questions for this role?",
+            "I recommend preparing a scoring rubric to evaluate candidates objectively.",
+            "What specific traits are you looking for in your ideal candidate?"
+          ],
+          vi: [
+            "Câu hỏi hành vi có thể giúp đánh giá cách ứng viên xử lý các tình huống trong quá khứ.",
+            "Hãy cân nhắc sử dụng quy trình phỏng vấn có cấu trúc cho tất cả ứng viên.",
+            "Bạn có muốn ví dụ về các câu hỏi phỏng vấn hiệu quả cho vai trò này không?",
+            "Tôi khuyên bạn nên chuẩn bị một bảng đánh giá để đánh giá ứng viên một cách khách quan.",
+            "Bạn đang tìm kiếm những đặc điểm cụ thể nào ở ứng viên lý tưởng của mình?"
+          ]
+        };
+        const randomIndex = Math.floor(Math.random() * interviewResponses[language].length);
+        aiResponseContent = interviewResponses[language][randomIndex];
+      }
+      else if (selectedTopic === 'company-profile') {
+        const profileResponses = {
+          en: [
+            "A compelling company profile should highlight your culture and values.",
+            "Would you like suggestions on how to improve your employer branding?",
+            "Company profiles with photos and videos get 50% more views.",
+            "What unique benefits do you offer that differentiate your company?",
+            "I can help you craft a company mission statement that attracts talent."
+          ],
+          vi: [
+            "Một hồ sơ công ty hấp dẫn nên nêu bật văn hóa và giá trị của bạn.",
+            "Bạn có muốn gợi ý về cách cải thiện thương hiệu nhà tuyển dụng của mình không?",
+            "Hồ sơ công ty có hình ảnh và video nhận được nhiều lượt xem hơn 50%.",
+            "Những lợi ích độc đáo nào bạn cung cấp để phân biệt công ty của bạn?",
+            "Tôi có thể giúp bạn xây dựng một tuyên bố sứ mệnh công ty thu hút nhân tài."
+          ]
+        };
+        const randomIndex = Math.floor(Math.random() * profileResponses[language].length);
+        aiResponseContent = profileResponses[language][randomIndex];
+      }
+      else {
+        // Default responses if no topic is selected
+        const defaultResponses = {
+          en: [
+            "I can help you create and manage job listings that attract qualified candidates.",
+            "Our AI-powered system can match your job requirements with potential candidates automatically.",
+            "Would you like me to help you write an effective job description?",
+            "I can provide insights on market rates for this position based on current data.",
+            "Let me show you how our platform can streamline your hiring process."
+          ],
+          vi: [
+            "Tôi có thể giúp bạn tạo và quản lý danh sách công việc để thu hút ứng viên phù hợp.",
+            "Hệ thống AI của chúng tôi có thể tự động kết nối yêu cầu công việc với ứng viên tiềm năng.",
+            "Bạn có muốn tôi giúp viết mô tả công việc hiệu quả không?",
+            "Tôi có thể cung cấp thông tin về mức lương thị trường cho vị trí này dựa trên dữ liệu hiện tại.",
+            "Hãy để tôi chỉ cho bạn cách nền tảng của chúng tôi có thể hợp lý hóa quy trình tuyển dụng của bạn."
+          ]
+        };
+        const randomIndex = Math.floor(Math.random() * defaultResponses[language].length);
+        aiResponseContent = defaultResponses[language][randomIndex];
+      }
+      
       const aiMessage = { 
         role: 'ai' as const, 
-        content: aiResponses[language][randomIndex]
+        content: aiResponseContent
       };
       
       setMessages(prev => [...prev, aiMessage]);
@@ -69,7 +169,7 @@ const Employers = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
@@ -77,6 +177,28 @@ const Employers = () => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
+    }
+  };
+
+  const clearConversation = () => {
+    setMessages([{ role: 'ai', content: t('aiWelcomeMessage') }]);
+    setShowClearButton(false);
+    setSelectedTopic(null);
+  };
+
+  const selectTopic = (topicId: string) => {
+    setSelectedTopic(topicId);
+    // Add a welcome message for the selected topic
+    const topic = topics.find(t => t.id === topicId);
+    if (topic) {
+      const welcomeMessage = {
+        en: `Let's discuss about ${topic.name.en}. How can I help you today?`,
+        vi: `Hãy thảo luận về ${topic.name.vi}. Tôi có thể giúp gì cho bạn hôm nay?`
+      };
+      
+      setMessages([
+        { role: 'ai', content: welcomeMessage[language] }
+      ]);
     }
   };
 
@@ -166,7 +288,7 @@ const Employers = () => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
-            className="mt-16 max-w-4xl mx-auto"
+            className="mt-16 max-w-5xl mx-auto"
           >
             <Card className="border-2 border-primary/20">
               <CardHeader>
@@ -179,43 +301,92 @@ const Employers = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="bg-muted/50 rounded-lg p-4 h-[300px] overflow-y-auto mb-4">
-                  {messages.map((message, index) => (
-                    <div 
-                      key={index} 
-                      className={`mb-4 ${message.role === 'user' ? 'text-right' : 'text-left'}`}
-                    >
-                      <div 
-                        className={`inline-block rounded-lg px-4 py-2 max-w-[80%] ${
-                          message.role === 'user' 
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-secondary text-secondary-foreground'
-                        }`}
-                      >
-                        {message.content}
+                <div className="flex flex-col md:flex-row gap-4">
+                  {/* Topics sidebar for larger screens */}
+                  <div className="md:w-1/4 space-y-3">
+                    <h3 className="font-medium text-sm">{language === 'en' ? 'Conversation Topics' : 'Chủ Đề Hội Thoại'}</h3>
+                    <div className="space-y-2">
+                      {topics.map((topic) => (
+                        <Button 
+                          key={topic.id}
+                          variant={selectedTopic === topic.id ? "default" : "outline"}
+                          className="w-full justify-start text-left"
+                          onClick={() => selectTopic(topic.id)}
+                        >
+                          <topic.icon className="mr-2 h-4 w-4" />
+                          <span>{topic.name[language]}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Chat container */}
+                  <div className="md:w-3/4">
+                    <div className="bg-muted/50 rounded-lg p-4 h-[300px] overflow-y-auto mb-4">
+                      {messages.map((message, index) => (
+                        <div 
+                          key={index} 
+                          className={`mb-4 ${message.role === 'user' ? 'text-right' : 'text-left'}`}
+                        >
+                          <div 
+                            className={`inline-block rounded-lg px-4 py-2 max-w-[80%] ${
+                              message.role === 'user' 
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-secondary text-secondary-foreground'
+                            }`}
+                          >
+                            {message.content}
+                          </div>
+                        </div>
+                      ))}
+                      {isAiTyping && (
+                        <div className="text-left">
+                          <div className="inline-block rounded-lg px-4 py-2 bg-secondary text-secondary-foreground">
+                            <span className="inline-block animate-pulse">•••</span>
+                          </div>
+                        </div>
+                      )}
+                      <div ref={messagesEndRef}></div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder={t('askAiPlaceholder')}
+                        value={inputMessage}
+                        onChange={(e) => setInputMessage(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        className="flex-grow"
+                      />
+                      <Button onClick={handleSendMessage} disabled={isAiTyping || !inputMessage.trim()}>
+                        <Send className="h-4 w-4" />
+                      </Button>
+                      {showClearButton && (
+                        <Button variant="outline" onClick={clearConversation} title={language === 'en' ? 'Clear conversation' : 'Xóa cuộc trò chuyện'}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                    
+                    {/* Mobile topics - shown below chat on small screens */}
+                    <div className="md:hidden mt-4">
+                      <Separator className="my-2" />
+                      <h3 className="font-medium text-sm mb-2">{language === 'en' ? 'Conversation Topics' : 'Chủ Đề Hội Thoại'}</h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        {topics.map((topic) => (
+                          <Button 
+                            key={topic.id}
+                            variant={selectedTopic === topic.id ? "default" : "outline"}
+                            size="sm"
+                            className="justify-start text-left"
+                            onClick={() => selectTopic(topic.id)}
+                          >
+                            <topic.icon className="mr-2 h-3 w-3" />
+                            <span className="text-xs">{topic.name[language]}</span>
+                          </Button>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                  {isAiTyping && (
-                    <div className="text-left">
-                      <div className="inline-block rounded-lg px-4 py-2 bg-secondary text-secondary-foreground">
-                        <span className="inline-block animate-pulse">•••</span>
-                      </div>
-                    </div>
-                  )}
-                  <div ref={messagesEndRef}></div>
-                </div>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder={t('askAiPlaceholder')}
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    className="flex-grow"
-                  />
-                  <Button onClick={handleSendMessage} disabled={isAiTyping || !inputMessage.trim()}>
-                    <Send className="h-4 w-4" />
-                  </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
