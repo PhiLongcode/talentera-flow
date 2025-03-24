@@ -12,7 +12,7 @@ type Translations = {
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: Record<string, string>;
+  t: (key: string) => string;
 }
 
 const translations: Translations = {
@@ -454,6 +454,118 @@ const translations: Translations = {
     en: 'About Us',
     vi: 'Về Chúng Tôi',
   },
+  readyTransform: {
+    en: 'Ready to Transform Your Career?',
+    vi: 'Sẵn Sàng Thay Đổi Sự Nghiệp?',
+  },
+  joinThousands: {
+    en: 'Join thousands of professionals who have already discovered the power of our blockchain-verified credentials and AI-powered job matching.',
+    vi: 'Tham gia cùng hàng ngàn chuyên gia đã khám phá sức mạnh của chứng chỉ xác minh bằng blockchain và công nghệ kết nối việc làm bằng AI của chúng tôi.',
+  },
+  getStarted: {
+    en: 'Get Started',
+    vi: 'Bắt Đầu Ngay',
+  },
+  learnMore: {
+    en: 'Learn More',
+    vi: 'Tìm Hiểu Thêm',
+  },
+  whyChoose: {
+    en: 'Why Choose JobConnect',
+    vi: 'Tại Sao Chọn JobConnect',
+  },
+  platformCombines: {
+    en: 'Our platform combines cutting-edge technology with a user-friendly experience to make your job search or hiring process smoother than ever.',
+    vi: 'Nền tảng của chúng tôi kết hợp công nghệ tiên tiến với trải nghiệm thân thiện với người dùng để làm cho quá trình tìm việc hoặc tuyển dụng của bạn trở nên suôn sẻ hơn bao giờ hết.',
+  },
+  secureBlockchain: {
+    en: 'Secure Blockchain',
+    vi: 'Blockchain An Toàn',
+  },
+  secureBlockchainDesc: {
+    en: 'Your credentials are verified and secured using blockchain technology.',
+    vi: 'Chứng chỉ của bạn được xác minh và bảo mật bằng công nghệ blockchain.',
+  },
+  aiPowered: {
+    en: 'AI-Powered Matching',
+    vi: 'Kết Nối Bằng AI',
+  },
+  aiPoweredDesc: {
+    en: 'Our AI algorithm matches candidates with the perfect job opportunities.',
+    vi: 'Thuật toán AI của chúng tôi kết nối ứng viên với cơ hội việc làm hoàn hảo.',
+  },
+  dataInsights: {
+    en: 'Data-Driven Insights',
+    vi: 'Phân Tích Dữ Liệu',
+  },
+  dataInsightsDesc: {
+    en: 'Get valuable insights to improve your job search or hiring strategy.',
+    vi: 'Nhận những phân tích có giá trị để cải thiện chiến lược tìm việc hoặc tuyển dụng của bạn.',
+  },
+  networking: {
+    en: 'Professional Networking',
+    vi: 'Kết Nối Chuyên Nghiệp',
+  },
+  networkingDesc: {
+    en: 'Connect with industry professionals and expand your network.',
+    vi: 'Kết nối với các chuyên gia trong ngành và mở rộng mạng lưới của bạn.',
+  },
+  discoverMatch: {
+    en: 'Discover your perfect career match with blockchain verified credentials',
+    vi: 'Khám phá công việc phù hợp với chứng chỉ được xác minh bằng blockchain',
+  },
+  connect: {
+    en: 'Connect',
+    vi: 'Kết nối',
+  },
+  grow: {
+    en: 'Grow',
+    vi: 'Phát triển',
+  },
+  and: {
+    en: 'and',
+    vi: 'và',
+  },
+  prosper: {
+    en: 'Prosper',
+    vi: 'Thịnh vượng',
+  },
+  revolutionaryPlatform: {
+    en: 'Experience our revolutionary platform that combines blockchain-verified credentials with AI-powered job matching to transform your career journey.',
+    vi: 'Trải nghiệm nền tảng cách mạng kết hợp chứng chỉ được xác minh bằng blockchain với công nghệ kết nối việc làm bằng AI để thay đổi hành trình sự nghiệp của bạn.',
+  },
+  search: {
+    en: 'Search',
+    vi: 'Tìm kiếm',
+  },
+  jobsAvailable: {
+    en: '10,000+ Jobs Available',
+    vi: '10,000+ Việc Làm Có Sẵn',
+  },
+  topCompanies: {
+    en: '500+ Top Companies',
+    vi: '500+ Công Ty Hàng Đầu',
+  },
+  english: {
+    en: 'EN',
+    vi: 'EN',
+  },
+  vietnamese: {
+    en: 'VI',
+    vi: 'VI',
+  },
+  home: {
+    en: 'Home',
+    vi: 'Trang chủ',
+  },
+  signIn: {
+    en: 'Sign In',
+    vi: 'Đăng nhập',
+  },
+  joinNow: {
+    en: 'Join Now',
+    vi: 'Tham gia ngay',
+  },
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -462,18 +574,18 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [language, setLanguage] = useState<Language>((localStorage.getItem('language') as Language) || 'en');
 
   // Update localStorage when language changes
-  useState(() => {
+  React.useEffect(() => {
     localStorage.setItem('language', language);
   }, [language]);
 
   const t = useMemo(() => {
-    const translatedStrings: Record<string, string> = {};
-    
-    Object.keys(translations).forEach((key) => {
-      translatedStrings[key] = translations[key][language];
-    });
-    
-    return translatedStrings;
+    return (key: string) => {
+      if (!translations[key]) {
+        console.warn(`Translation key not found: ${key}`);
+        return key;
+      }
+      return translations[key][language];
+    };
   }, [language]);
 
   return (

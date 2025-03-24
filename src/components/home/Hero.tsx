@@ -90,7 +90,7 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6"
           >
-            <span className="text-gradient">{t('connect')},</span> {t('grow')}, 
+            <span className="text-gradient">{t('connect')}</span>, {t('grow')}, 
             <br className="hidden md:block" /> {t('and')} 
             <span className="text-gradient"> {t('prosper')}</span>
           </motion.h1>
