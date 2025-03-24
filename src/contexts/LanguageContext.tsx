@@ -292,7 +292,7 @@ const translations: Translations = {
     en: 'Edit Profile',
     vi: 'Chỉnh Sửa Hồ Sơ',
   },
-  aboutUs: {
+  aboutCompany: {
     en: 'About Us',
     vi: 'Về Chúng Tôi',
   },
