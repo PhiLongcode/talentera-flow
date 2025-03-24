@@ -1,7 +1,6 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Briefcase, Building, Users, UserPlus, ChevronRight, Bot, Trash2 } from 'lucide-react';
+import { Send, Briefcase, Building, Users, UserPlus, ChevronRight, Bot, Trash2, Plus, Check, FileText, Search } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,6 +10,9 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form';
 
 const Employers = () => {
   const { t, language } = useLanguage();
@@ -34,6 +36,42 @@ const Employers = () => {
     { id: 'company-profile', icon: Building, name: { en: 'Company Profile', vi: 'Hồ Sơ Công Ty' } },
   ];
 
+  // Sample job data
+  const sampleJobs = [
+    { id: 1, title: 'Senior React Developer', status: 'Active', applicants: 18, posted: '2023-09-01' },
+    { id: 2, title: 'UX/UI Designer', status: 'Active', applicants: 24, posted: '2023-09-05' },
+    { id: 3, title: 'Project Manager', status: 'Closed', applicants: 32, posted: '2023-08-15' },
+  ];
+
+  // Sample candidate data
+  const sampleCandidates = [
+    { id: 101, name: 'Alex Johnson', role: 'Frontend Developer', match: '92%', status: 'Interviewed' },
+    { id: 102, name: 'Sarah Williams', role: 'UX Designer', match: '88%', status: 'Screening' },
+    { id: 103, name: 'David Chen', role: 'Backend Developer', match: '85%', status: 'Applied' },
+    { id: 104, name: 'Emily Davis', role: 'Product Manager', match: '90%', status: 'Shortlisted' },
+  ];
+
+  // Sample company profile data
+  const companyProfileSample = {
+    name: 'TechCorp International',
+    industry: 'Technology',
+    size: '50-200 employees',
+    location: 'San Francisco, CA',
+    about: 'TechCorp is a leading technology company specializing in web and mobile applications.',
+    culture: 'We value innovation, collaboration, and work-life balance.',
+    benefits: ['Flexible working hours', 'Health insurance', 'Professional development', 'Remote work options']
+  };
+
+  // Sample talent acquisition stats
+  const talentStats = {
+    applicantsThisMonth: 145,
+    timeToHire: '21 days',
+    costPerHire: '$4,320',
+    retentionRate: '92%',
+    topSources: ['LinkedIn', 'Indeed', 'Company Website', 'Referrals']
+  };
+
+  // Handle sending a message to the AI assistant
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
     
@@ -202,26 +240,203 @@ const Employers = () => {
     }
   };
 
+  // Employer features with enhanced details
   const employerFeatures = [
     { 
       icon: Briefcase, 
       title: t('manageJobListings'),
-      description: t('manageJobListingsDesc')
+      description: t('manageJobListingsDesc'),
+      detailedContent: (
+        <div className="space-y-4">
+          <Tabs defaultValue="current">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="current">{language === 'en' ? 'Current Jobs' : 'Công Việc Hiện Tại'}</TabsTrigger>
+              <TabsTrigger value="create">{language === 'en' ? 'Create Job' : 'Tạo Việc Làm'}</TabsTrigger>
+            </TabsList>
+            <TabsContent value="current">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{language === 'en' ? 'Job Title' : 'Chức Danh'}</TableHead>
+                    <TableHead>{language === 'en' ? 'Status' : 'Trạng Thái'}</TableHead>
+                    <TableHead>{language === 'en' ? 'Applicants' : 'Ứng Viên'}</TableHead>
+                    <TableHead>{language === 'en' ? 'Posted Date' : 'Ngày Đăng'}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sampleJobs.map(job => (
+                    <TableRow key={job.id}>
+                      <TableCell>{job.title}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${job.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                          {job.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>{job.applicants}</TableCell>
+                      <TableCell>{job.posted}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            <TabsContent value="create">
+              <div className="space-y-4 p-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{language === 'en' ? 'Job Title' : 'Chức Danh'}</label>
+                  <Input placeholder={language === 'en' ? 'e.g. Frontend Developer' : 'VD: Lập Trình Viên Frontend'} />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{language === 'en' ? 'Department' : 'Phòng Ban'}</label>
+                  <Input placeholder={language === 'en' ? 'e.g. Engineering' : 'VD: Kỹ Thuật'} />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{language === 'en' ? 'Job Description' : 'Mô Tả Công Việc'}</label>
+                  <textarea 
+                    className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    placeholder={language === 'en' ? 'Enter job description...' : 'Nhập mô tả công việc...'}
+                  ></textarea>
+                </div>
+                <Button>{language === 'en' ? 'Create Job Listing' : 'Tạo Tin Tuyển Dụng'}</Button>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      )
     },
     { 
       icon: Users, 
       title: t('candidateMatching'),
-      description: t('candidateMatchingDesc')
+      description: t('candidateMatchingDesc'),
+      detailedContent: (
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2 mb-4">
+            <Input placeholder={language === 'en' ? 'Search candidates...' : 'Tìm kiếm ứng viên...'} className="flex-grow" />
+            <Button variant="outline" size="icon">
+              <Search className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          <h4 className="text-sm font-medium mb-2">{language === 'en' ? 'Top AI-Matched Candidates' : 'Ứng Viên Được Ghép Cặp Hàng Đầu Bởi AI'}</h4>
+          
+          <div className="space-y-3">
+            {sampleCandidates.map(candidate => (
+              <div key={candidate.id} className="border rounded-lg p-3 bg-background hover:bg-muted/50 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h5 className="font-medium">{candidate.name}</h5>
+                    <p className="text-sm text-muted-foreground">{candidate.role}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="inline-block bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-medium">
+                      {candidate.match}
+                    </span>
+                    <p className="text-xs text-muted-foreground mt-1">{candidate.status}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="flex justify-center mt-4">
+            <Button variant="outline" className="w-full">
+              {language === 'en' ? 'View All Candidates' : 'Xem Tất Cả Ứng Viên'}
+            </Button>
+          </div>
+        </div>
+      )
     },
     { 
       icon: Building, 
       title: t('companyProfile'),
-      description: t('companyProfileDesc')
+      description: t('companyProfileDesc'),
+      detailedContent: (
+        <div className="space-y-4">
+          <div className="bg-muted/50 rounded-lg p-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-lg font-semibold">{companyProfileSample.name}</h3>
+                <p className="text-sm text-muted-foreground">{companyProfileSample.industry} · {companyProfileSample.size}</p>
+                <p className="text-sm">{companyProfileSample.location}</p>
+              </div>
+              <Button variant="outline" size="sm">
+                <FileText className="h-4 w-4 mr-2" />
+                {language === 'en' ? 'Edit Profile' : 'Chỉnh Sửa Hồ Sơ'}
+              </Button>
+            </div>
+          </div>
+          
+          <div>
+            <h4 className="font-medium mb-2">{language === 'en' ? 'About Us' : 'Về Chúng Tôi'}</h4>
+            <p className="text-sm text-muted-foreground">{companyProfileSample.about}</p>
+          </div>
+          
+          <div>
+            <h4 className="font-medium mb-2">{language === 'en' ? 'Company Culture' : 'Văn Hóa Công Ty'}</h4>
+            <p className="text-sm text-muted-foreground">{companyProfileSample.culture}</p>
+          </div>
+          
+          <div>
+            <h4 className="font-medium mb-2">{language === 'en' ? 'Benefits & Perks' : 'Phúc Lợi & Đãi Ngộ'}</h4>
+            <div className="grid grid-cols-2 gap-2">
+              {companyProfileSample.benefits.map((benefit, index) => (
+                <div key={index} className="flex items-center">
+                  <Check className="h-4 w-4 text-primary mr-2" />
+                  <span className="text-sm">{benefit}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )
     },
     { 
       icon: UserPlus, 
       title: t('talentAcquisition'),
-      description: t('talentAcquisitionDesc')
+      description: t('talentAcquisitionDesc'),
+      detailedContent: (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-muted/50 rounded-lg p-4">
+              <h4 className="text-sm font-medium text-muted-foreground">{language === 'en' ? 'Applicants This Month' : 'Ứng Viên Tháng Này'}</h4>
+              <p className="text-2xl font-bold">{talentStats.applicantsThisMonth}</p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4">
+              <h4 className="text-sm font-medium text-muted-foreground">{language === 'en' ? 'Average Time to Hire' : 'Thời Gian Tuyển Dụng Trung Bình'}</h4>
+              <p className="text-2xl font-bold">{talentStats.timeToHire}</p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4">
+              <h4 className="text-sm font-medium text-muted-foreground">{language === 'en' ? 'Cost Per Hire' : 'Chi Phí Cho Mỗi Tuyển Dụng'}</h4>
+              <p className="text-2xl font-bold">{talentStats.costPerHire}</p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4">
+              <h4 className="text-sm font-medium text-muted-foreground">{language === 'en' ? 'Retention Rate' : 'Tỷ Lệ Giữ Chân'}</h4>
+              <p className="text-2xl font-bold">{talentStats.retentionRate}</p>
+            </div>
+          </div>
+          
+          <div>
+            <h4 className="font-medium mb-2">{language === 'en' ? 'Top Recruiting Sources' : 'Nguồn Tuyển Dụng Hàng Đầu'}</h4>
+            <div className="space-y-2">
+              {talentStats.topSources.map((source, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <span className="text-sm">{source}</span>
+                  <div className="w-2/3 bg-muted rounded-full h-2">
+                    <div 
+                      className="bg-primary rounded-full h-2" 
+                      style={{ width: `${100 - index * 15}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <Button className="w-full">
+            <Plus className="h-4 w-4 mr-2" />
+            {language === 'en' ? 'Create Talent Acquisition Plan' : 'Tạo Kế Hoạch Thu Hút Nhân Tài'}
+          </Button>
+        </div>
+      )
     }
   ];
 
@@ -268,14 +483,19 @@ const Employers = () => {
                         {t('learnMore')} <ChevronRight className="h-4 w-4 ml-1" />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="max-w-xl">
                       <DialogHeader>
-                        <DialogTitle>{feature.title}</DialogTitle>
-                        <DialogDescription className="pt-4">
+                        <DialogTitle className="flex items-center gap-2">
+                          <feature.icon className="h-5 w-5 text-primary" />
+                          {feature.title}
+                        </DialogTitle>
+                        <DialogDescription className="pt-2">
                           {feature.description}
-                          <p className="mt-4">{t('featureComingSoon')}</p>
                         </DialogDescription>
                       </DialogHeader>
+                      <div className="mt-4">
+                        {feature.detailedContent}
+                      </div>
                     </DialogContent>
                   </Dialog>
                 </CardFooter>
@@ -304,7 +524,7 @@ const Employers = () => {
                 <div className="flex flex-col md:flex-row gap-4">
                   {/* Topics sidebar for larger screens */}
                   <div className="md:w-1/4 space-y-3">
-                    <h3 className="font-medium text-sm">{language === 'en' ? 'Conversation Topics' : 'Chủ Đề Hội Thoại'}</h3>
+                    <h3 className="font-medium text-sm">{t('conversationTopics')}</h3>
                     <div className="space-y-2">
                       {topics.map((topic) => (
                         <Button 
@@ -361,7 +581,7 @@ const Employers = () => {
                         <Send className="h-4 w-4" />
                       </Button>
                       {showClearButton && (
-                        <Button variant="outline" onClick={clearConversation} title={language === 'en' ? 'Clear conversation' : 'Xóa cuộc trò chuyện'}>
+                        <Button variant="outline" onClick={clearConversation} title={t('clearConversation')}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       )}
@@ -370,7 +590,7 @@ const Employers = () => {
                     {/* Mobile topics - shown below chat on small screens */}
                     <div className="md:hidden mt-4">
                       <Separator className="my-2" />
-                      <h3 className="font-medium text-sm mb-2">{language === 'en' ? 'Conversation Topics' : 'Chủ Đề Hội Thoại'}</h3>
+                      <h3 className="font-medium text-sm mb-2">{t('conversationTopics')}</h3>
                       <div className="grid grid-cols-2 gap-2">
                         {topics.map((topic) => (
                           <Button 

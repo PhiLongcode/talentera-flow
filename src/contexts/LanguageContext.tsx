@@ -239,6 +239,95 @@ const translations: Translations = {
     en: 'Clear conversation',
     vi: 'Xóa cuộc trò chuyện',
   },
+  // New employer feature interfaces
+  currentJobs: {
+    en: 'Current Jobs',
+    vi: 'Công Việc Hiện Tại',
+  },
+  createJob: {
+    en: 'Create Job',
+    vi: 'Tạo Việc Làm',
+  },
+  jobTitle: {
+    en: 'Job Title',
+    vi: 'Chức Danh',
+  },
+  status: {
+    en: 'Status',
+    vi: 'Trạng Thái',
+  },
+  applicants: {
+    en: 'Applicants',
+    vi: 'Ứng Viên',
+  },
+  postedDate: {
+    en: 'Posted Date',
+    vi: 'Ngày Đăng',
+  },
+  department: {
+    en: 'Department',
+    vi: 'Phòng Ban',
+  },
+  jobDescription: {
+    en: 'Job Description',
+    vi: 'Mô Tả Công Việc',
+  },
+  createJobListing: {
+    en: 'Create Job Listing',
+    vi: 'Tạo Tin Tuyển Dụng',
+  },
+  searchCandidates: {
+    en: 'Search candidates...',
+    vi: 'Tìm kiếm ứng viên...',
+  },
+  topAIMatchedCandidates: {
+    en: 'Top AI-Matched Candidates',
+    vi: 'Ứng Viên Được Ghép Cặp Hàng Đầu Bởi AI',
+  },
+  viewAllCandidates: {
+    en: 'View All Candidates',
+    vi: 'Xem Tất Cả Ứng Viên',
+  },
+  editProfile: {
+    en: 'Edit Profile',
+    vi: 'Chỉnh Sửa Hồ Sơ',
+  },
+  aboutUs: {
+    en: 'About Us',
+    vi: 'Về Chúng Tôi',
+  },
+  companyCulture: {
+    en: 'Company Culture',
+    vi: 'Văn Hóa Công Ty',
+  },
+  benefitsAndPerks: {
+    en: 'Benefits & Perks',
+    vi: 'Phúc Lợi & Đãi Ngộ',
+  },
+  applicantsThisMonth: {
+    en: 'Applicants This Month',
+    vi: 'Ứng Viên Tháng Này',
+  },
+  averageTimeToHire: {
+    en: 'Average Time to Hire',
+    vi: 'Thời Gian Tuyển Dụng Trung Bình',
+  },
+  costPerHire: {
+    en: 'Cost Per Hire',
+    vi: 'Chi Phí Cho Mỗi Tuyển Dụng',
+  },
+  retentionRate: {
+    en: 'Retention Rate',
+    vi: 'Tỷ Lệ Giữ Chân',
+  },
+  topRecruitingSources: {
+    en: 'Top Recruiting Sources',
+    vi: 'Nguồn Tuyển Dụng Hàng Đầu',
+  },
+  createTalentAcquisitionPlan: {
+    en: 'Create Talent Acquisition Plan',
+    vi: 'Tạo Kế Hoạch Thu Hút Nhân Tài',
+  },
 };
 
 // Create the provider component
