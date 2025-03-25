@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Briefcase, Calendar, DollarSign, Clock, MapPin, X, Plus, Tags } from 'lucide-react';
+import { Briefcase, Calendar, DollarSign, Clock, MapPin, X, Plus, Tags, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 
 import { useLanguage } from '@/contexts/LanguageContext';
