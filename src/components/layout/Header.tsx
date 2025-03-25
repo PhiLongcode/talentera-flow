@@ -114,7 +114,7 @@ const Header = () => {
                 className="flex items-center gap-2 rounded-full hover:bg-secondary"
               >
                 <LogIn className="h-4 w-4" />
-                <span>{t('signIn')}</span>
+                <span>Đăng nhập</span>
               </Button>
             </Link>
             
@@ -122,7 +122,7 @@ const Header = () => {
               <Button 
                 className="rounded-full button-glow"
               >
-                {t('joinNow')}
+                Tham gia ngay
               </Button>
             </Link>
           </div>
@@ -189,7 +189,7 @@ const Header = () => {
                     className="w-full flex items-center justify-center gap-2"
                   >
                     <LogIn className="h-4 w-4" />
-                    <span>{t('signIn')}</span>
+                    <span>Đăng nhập</span>
                   </Button>
                 </Link>
                 <Link 
@@ -198,7 +198,7 @@ const Header = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Button className="w-full button-glow">
-                    {t('joinNow')}
+                    Tham gia ngay
                   </Button>
                 </Link>
               </div>

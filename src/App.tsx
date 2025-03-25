@@ -11,6 +11,8 @@ import JobDetail from "./pages/JobDetail";
 import Employers from "./pages/Employers";
 import Candidate from "./pages/Candidate";
 import Recruiter from "./pages/Recruiter";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
             <Route path="/employers" element={<Employers />} />
             <Route path="/candidate" element={<Candidate />} />
             <Route path="/recruiter" element={<Recruiter />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
