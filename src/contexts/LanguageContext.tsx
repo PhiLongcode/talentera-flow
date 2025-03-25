@@ -1,592 +1,371 @@
-import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
 
-type Language = 'en' | 'vi';
+import React, { createContext, useContext, useState } from "react";
 
-type Translations = {
-  [key: string]: {
-    en: string;
-    vi: string;
-  };
-};
-
+// Define the type for the language context
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  language: string;
+  setLanguage: (language: string) => void;
+  t: any; // Translator function
 }
 
-const translations: Translations = {
-  headerHome: {
-    en: 'Home',
-    vi: 'Trang chủ',
-  },
-  headerJobs: {
-    en: 'Jobs',
-    vi: 'Việc làm',
-  },
-  headerEmployers: {
-    en: 'Employers',
-    vi: 'Nhà tuyển dụng',
-  },
-  headerLogin: {
-    en: 'Login',
-    vi: 'Đăng nhập',
-  },
-  headerSignup: {
-    en: 'Sign Up',
-    vi: 'Đăng ký',
-  },
-  
-  // Homepage Elements
-  heroTitle: {
-    en: 'Find Your Dream Job',
-    vi: 'Tìm Kiếm Công Việc Mơ Ước',
-  },
-  heroSubtitle: {
-    en: 'Connecting talent with opportunity.',
-    vi: 'Kết nối tài năng với cơ hội.',
-  },
-  searchPlaceholder: {
-    en: 'Search for jobs...',
-    vi: 'Tìm kiếm việc làm...',
-  },
-  searchButton: {
-    en: 'Search',
-    vi: 'Tìm kiếm',
-  },
-  featuredJobs: {
-    en: 'Featured Jobs',
-    vi: 'Việc làm nổi bật',
-  },
-  featuredCompanies: {
-    en: 'Featured Companies',
-    vi: 'Công ty nổi bật',
-  },
-  viewAllJobs: {
-    en: 'View All Jobs',
-    vi: 'Xem tất cả việc làm',
-  },
-  
-  // Job Listing
-  jobTitle: {
-    en: 'Job Title',
-    vi: 'Tên công việc',
-  },
-  companyName: {
-    en: 'Company Name',
-    vi: 'Tên công ty',
-  },
-  location: {
-    en: 'Location',
-    vi: 'Địa điểm',
-  },
-  salary: {
-    en: 'Salary',
-    vi: 'Mức lương',
-  },
-  jobType: {
-    en: 'Job Type',
-    vi: 'Loại công việc',
-  },
-  postedDate: {
-    en: 'Posted Date',
-    vi: 'Ngày đăng',
-  },
-  applyNow: {
-    en: 'Apply Now',
-    vi: 'Ứng tuyển ngay',
-  },
-  
-  // Job Details
-  jobDescription: {
-    en: 'Job Description',
-    vi: 'Mô tả công việc',
-  },
-  requirements: {
-    en: 'Requirements',
-    vi: 'Yêu cầu',
-  },
-  responsibilities: {
-    en: 'Responsibilities',
-    vi: 'Trách nhiệm',
-  },
-  benefits: {
-    en: 'Benefits',
-    vi: 'Quyền lợi',
-  },
-  
-  // Employer Page
-  aboutUs: {
-    en: 'About Us',
-    vi: 'Về chúng tôi',
-  },
-  ourMission: {
-    en: 'Our Mission',
-    vi: 'Sứ mệnh của chúng tôi',
-  },
-  ourValues: {
-    en: 'Our Values',
-    vi: 'Giá trị của chúng tôi',
-  },
-  
-  // Dialogs and Modals
-  confirm: {
-    en: 'Confirm',
-    vi: 'Xác nhận',
-  },
-  cancel: {
-    en: 'Cancel',
-    vi: 'Hủy',
-  },
-  close: {
-    en: 'Close',
-    vi: 'Đóng',
-  },
-  submit: {
-    en: 'Submit',
-    vi: 'Gửi',
-  },
-  
-  // Candidate Portal Translations
-  candidatePortal: {
-    en: 'Candidate Portal',
-    vi: 'Cổng Ứng Viên',
-  },
-  candidateWelcome: {
-    en: 'Your Career Journey Starts Here',
-    vi: 'Hành Trình Sự Nghiệp Của Bạn Bắt Đầu Từ Đây',
-  },
-  candidateWelcomeDesc: {
-    en: 'Discover opportunities that match your skills and aspirations with AI-powered job matching and blockchain-verified credentials.',
-    vi: 'Khám phá các cơ hội phù hợp với kỹ năng và nguyện vọng của bạn với công nghệ AI và chứng chỉ được xác minh bằng blockchain.',
-  },
-  candidateFeatures: {
-    en: 'Tools for Your Success',
-    vi: 'Công Cụ Cho Sự Thành Công Của Bạn',
-  },
-  candidateFeaturesDesc: {
-    en: 'Everything you need to find, apply for, and land your dream job.',
-    vi: 'Tất cả những gì bạn cần để tìm kiếm, ứng tuyển và giành được công việc mơ ước.',
-  },
-  candidateJobSearch: {
-    en: 'Job Search',
-    vi: 'Tìm Kiếm Việc Làm',
-  },
-  candidateJobSearchDesc: {
-    en: 'Explore jobs tailored to your skills and experience.',
-    vi: 'Khám phá các công việc phù hợp với kỹ năng và kinh nghiệm của bạn.',
-  },
-  candidateProfile: {
-    en: 'Profile Builder',
-    vi: 'Xây Dựng Hồ Sơ',
-  },
-  candidateProfileDesc: {
-    en: 'Create a compelling profile with blockchain-verified credentials.',
-    vi: 'Tạo hồ sơ ấn tượng với chứng chỉ được xác minh bằng blockchain.',
-  },
-  candidateApplications: {
-    en: 'Applications',
-    vi: 'Đơn Ứng Tuyển',
-  },
-  candidateApplicationsDesc: {
-    en: 'Track all your job applications in one place.',
-    vi: 'Theo dõi tất cả đơn ứng tuyển của bạn tại một nơi.',
-  },
-  candidateMessages: {
-    en: 'Messages',
-    vi: 'Tin Nhắn',
-  },
-  candidateMessagesDesc: {
-    en: 'Communicate directly with employers and recruiters.',
-    vi: 'Giao tiếp trực tiếp với nhà tuyển dụng.',
-  },
-  findJobs: {
-    en: 'Find Jobs',
-    vi: 'Tìm Việc Làm',
-  },
-  myProfile: {
-    en: 'My Profile',
-    vi: 'Hồ Sơ Của Tôi',
-  },
-  recentJobs: {
-    en: 'Recent Job Opportunities',
-    vi: 'Cơ Hội Việc Làm Gần Đây',
-  },
-  recentJobsDesc: {
-    en: 'Explore the latest job openings matching your profile.',
-    vi: 'Khám phá các vị trí việc làm mới nhất phù hợp với hồ sơ của bạn.',
-  },
-  applicationTips: {
-    en: 'Application Success Tips',
-    vi: 'Mẹo Ứng Tuyển Thành Công',
-  },
-  tipTimelyApply: {
-    en: 'Apply Early',
-    vi: 'Ứng Tuyển Sớm',
-  },
-  tipTimelyApplyDesc: {
-    en: 'Be among the first applicants to increase your chances of getting noticed.',
-    vi: 'Hãy là một trong những ứng viên đầu tiên để tăng cơ hội được chú ý.',
-  },
-  tipTailorResume: {
-    en: 'Tailor Your Resume',
-    vi: 'Tuỳ Chỉnh CV',
-  },
-  tipTailorResumeDesc: {
-    en: 'Customize your resume for each application to highlight relevant skills.',
-    vi: 'Điều chỉnh CV của bạn cho từng đơn ứng tuyển để nổi bật các kỹ năng liên quan.',
-  },
-  tipFollowUp: {
-    en: 'Follow Up',
-    vi: 'Theo Dõi Phản Hồi',
-  },
-  tipFollowUpDesc: {
-    en: 'Send a follow-up message after applying to demonstrate your interest.',
-    vi: 'Gửi tin nhắn theo dõi sau khi ứng tuyển để thể hiện sự quan tâm của bạn.',
-  },
-  readyToApply: {
-    en: 'Ready to Find Your Next Opportunity?',
-    vi: 'Sẵn Sàng Tìm Cơ Hội Tiếp Theo?',
-  },
-  readyToApplyDesc: {
-    en: 'Browse through our curated list of job openings and find your perfect match.',
-    vi: 'Duyệt qua danh sách các vị trí việc làm được tuyển chọn và tìm sự phù hợp hoàn hảo cho bạn.',
-  },
-  browseOpenings: {
-    en: 'Browse Job Openings',
-    vi: 'Duyệt Qua Vị Trí Tuyển Dụng',
-  },
-  explore: {
-    en: 'Explore',
-    vi: 'Khám Phá',
-  },
-  
-  // Recruiter Portal Translations
-  recruiterPortal: {
-    en: 'Recruiter Portal',
-    vi: 'Cổng Nhà Tuyển Dụng',
-  },
-  recruiterDashboard: {
-    en: 'Recruiter Dashboard',
-    vi: 'Bảng Điều Khiển Nhà Tuyển Dụng',
-  },
-  management: {
-    en: 'Management',
-    vi: 'Quản Lý',
-  },
-  dashboard: {
-    en: 'Dashboard',
-    vi: 'Bảng Điều Khiển',
-  },
-  jobs: {
-    en: 'Jobs',
-    vi: 'Việc Làm',
-  },
-  candidates: {
-    en: 'Candidates',
-    vi: 'Ứng Viên',
-  },
-  search: {
-    en: 'Search',
-    vi: 'Tìm Kiếm',
-  },
-  settings: {
-    en: 'Settings',
-    vi: 'Cài Đặt',
-  },
-  companyProfile: {
-    en: 'Company Profile',
-    vi: 'Hồ Sơ Công Ty',
-  },
-  backToMain: {
-    en: 'Back to Main Site',
-    vi: 'Quay Về Trang Chính',
-  },
-  postJob: {
-    en: 'Post Job',
-    vi: 'Đăng Tuyển',
-  },
-  keyMetrics: {
-    en: 'Key Metrics',
-    vi: 'Chỉ Số Chính',
-  },
-  activeJobs: {
-    en: 'Active Jobs',
-    vi: 'Việc Làm Đang Hoạt Động',
-  },
-  newApplications: {
-    en: 'New Applications',
-    vi: 'Đơn Ứng Tuyển Mới',
-  },
-  candidatesShortlisted: {
-    en: 'Shortlisted',
-    vi: 'Ứng Viên Trong Danh Sách Ngắn',
-  },
-  averageTimeToHire: {
-    en: 'Avg. Time to Hire',
-    vi: 'Thời Gian Tuyển Dụng TB',
-  },
-  days: {
-    en: 'days',
-    vi: 'ngày',
-  },
-  lastWeek: {
-    en: 'last week',
-    vi: 'tuần trước',
-  },
-  recruiterActivities: {
-    en: 'Activities',
-    vi: 'Hoạt Động',
-  },
-  recentActivity: {
-    en: 'Recent Activity',
-    vi: 'Hoạt Động Gần Đây',
-  },
-  applications: {
-    en: 'Applications',
-    vi: 'Đơn Ứng Tuyển',
-  },
-  latestActivitiesDesc: {
-    en: 'Your latest recruiting activities',
-    vi: 'Các hoạt động tuyển dụng gần đây của bạn',
-  },
-  newCandidateApplied: {
-    en: 'New Candidate Applied',
-    vi: 'Ứng Viên Mới Đã Ứng Tuyển',
-  },
-  newCandidateAppliedDesc: {
-    en: 'John Doe applied for Senior React Developer position',
-    vi: 'John Doe đã ứng tuyển vị trí Senior React Developer',
-  },
-  hoursAgo: {
-    en: 'hours ago',
-    vi: 'giờ trước',
-  },
-  jobPostingViewed: {
-    en: 'Job Posting Viewed',
-    vi: 'Tin Tuyển Dụng Được Xem',
-  },
-  jobPostingViewedDesc: {
-    en: 'Your UX/UI Designer posting received 45 new views',
-    vi: 'Tin tuyển dụng UX/UI Designer của bạn đã nhận được 45 lượt xem mới',
-  },
-  jobEdited: {
-    en: 'Job Listing Edited',
-    vi: 'Tin Tuyển Dụng Đã Chỉnh Sửa',
-  },
-  jobEditedDesc: {
-    en: 'You updated the requirements for Marketing Specialist position',
-    vi: 'Bạn đã cập nhật yêu cầu cho vị trí Marketing Specialist',
-  },
-  dayAgo: {
-    en: 'day ago',
-    vi: 'ngày trước',
-  },
-  viewAllActivities: {
-    en: 'View All Activities',
-    vi: 'Xem Tất Cả Hoạt Động',
-  },
-  activeJobsDesc: {
-    en: 'Currently active job listings',
-    vi: 'Các tin tuyển dụng đang hoạt động',
-  },
-  manage: {
-    en: 'Manage',
-    vi: 'Quản Lý',
-  },
-  viewAllJobs: {
-    en: 'View All Jobs',
-    vi: 'Xem Tất Cả Việc Làm',
-  },
-  recentApplications: {
-    en: 'Recent Applications',
-    vi: 'Đơn Ứng Tuyển Gần Đây',
-  },
-  recentApplicationsDesc: {
-    en: 'Recently received job applications',
-    vi: 'Các đơn ứng tuyển nhận được gần đây',
-  },
-  review: {
-    en: 'Review',
-    vi: 'Xem Xét',
-  },
-  viewAllApplications: {
-    en: 'View All Applications',
-    vi: 'Xem Tất Cả Đơn Ứng Tuyển',
-  },
-  quickAccess: {
-    en: 'Quick Access',
-    vi: 'Truy Cập Nhanh',
-  },
-  recruiterJobManagement: {
-    en: 'Job Management',
-    vi: 'Quản Lý Việc Làm',
-  },
-  recruiterJobManagementDesc: {
-    en: 'Create, edit, and manage your job listings.',
-    vi: 'Tạo, chỉnh sửa và quản lý các tin tuyển dụng của bạn.',
-  },
-  recruiterCandidates: {
-    en: 'Candidate Management',
-    vi: 'Quản Lý Ứng Viên',
-  },
-  recruiterCandidatesDesc: {
-    en: 'Review applications and manage candidate pipeline.',
-    vi: 'Xem xét đơn ứng tuyển và quản lý quy trình ứng viên.',
-  },
-  recruiterCompanyProfile: {
-    en: 'Company Profile',
-    vi: 'Hồ Sơ Công Ty',
-  },
-  recruiterCompanyProfileDesc: {
-    en: 'Update your company information and branding.',
-    vi: 'Cập nhật thông tin và thương hiệu công ty của bạn.',
-  },
-  recruiterTalentSearch: {
-    en: 'Talent Search',
-    vi: 'Tìm Kiếm Nhân Tài',
-  },
-  recruiterTalentSearchDesc: {
-    en: 'Find candidates with AI-powered matching.',
-    vi: 'Tìm ứng viên với công nghệ kết nối AI.',
-  },
-  aboutCompany: {
-    en: 'About Us',
-    vi: 'Về Chúng Tôi',
-  },
-  readyTransform: {
-    en: 'Ready to Transform Your Career?',
-    vi: 'Sẵn Sàng Thay Đổi Sự Nghiệp?',
-  },
-  joinThousands: {
-    en: 'Join thousands of professionals who have already discovered the power of our blockchain-verified credentials and AI-powered job matching.',
-    vi: 'Tham gia cùng hàng ngàn chuyên gia đã khám phá sức mạnh của chứng chỉ xác minh bằng blockchain và công nghệ kết nối việc làm bằng AI của chúng tôi.',
-  },
-  getStarted: {
-    en: 'Get Started',
-    vi: 'Bắt Đầu Ngay',
-  },
-  learnMore: {
-    en: 'Learn More',
-    vi: 'Tìm Hiểu Thêm',
-  },
-  whyChoose: {
-    en: 'Why Choose JobConnect',
-    vi: 'Tại Sao Chọn JobConnect',
-  },
-  platformCombines: {
-    en: 'Our platform combines cutting-edge technology with a user-friendly experience to make your job search or hiring process smoother than ever.',
-    vi: 'Nền tảng của chúng tôi kết hợp công nghệ tiên tiến với trải nghiệm thân thiện với người dùng để làm cho quá trình tìm việc hoặc tuyển dụng của bạn trở nên suôn sẻ hơn bao giờ hết.',
-  },
-  secureBlockchain: {
-    en: 'Secure Blockchain',
-    vi: 'Blockchain An Toàn',
-  },
-  secureBlockchainDesc: {
-    en: 'Your credentials are verified and secured using blockchain technology.',
-    vi: 'Chứng chỉ của bạn được xác minh và bảo mật bằng công nghệ blockchain.',
-  },
-  aiPowered: {
-    en: 'AI-Powered Matching',
-    vi: 'Kết Nối Bằng AI',
-  },
-  aiPoweredDesc: {
-    en: 'Our AI algorithm matches candidates with the perfect job opportunities.',
-    vi: 'Thuật toán AI của chúng tôi kết nối ứng viên với cơ hội việc làm hoàn hảo.',
-  },
-  dataInsights: {
-    en: 'Data-Driven Insights',
-    vi: 'Phân Tích Dữ Liệu',
-  },
-  dataInsightsDesc: {
-    en: 'Get valuable insights to improve your job search or hiring strategy.',
-    vi: 'Nhận những phân tích có giá trị để cải thiện chiến lược tìm việc hoặc tuyển dụng của bạn.',
-  },
-  networking: {
-    en: 'Professional Networking',
-    vi: 'Kết Nối Chuyên Nghiệp',
-  },
-  networkingDesc: {
-    en: 'Connect with industry professionals and expand your network.',
-    vi: 'Kết nối với các chuyên gia trong ngành và mở rộng mạng lưới của bạn.',
-  },
-  discoverMatch: {
-    en: 'Discover your perfect career match with blockchain verified credentials',
-    vi: 'Khám phá công việc phù hợp với chứng chỉ được xác minh bằng blockchain',
-  },
-  connect: {
-    en: 'Connect',
-    vi: 'Kết nối',
-  },
-  grow: {
-    en: 'Grow',
-    vi: 'Phát triển',
-  },
-  and: {
-    en: 'and',
-    vi: 'và',
-  },
-  prosper: {
-    en: 'Prosper',
-    vi: 'Thịnh vượng',
-  },
-  revolutionaryPlatform: {
-    en: 'Experience our revolutionary platform that combines blockchain-verified credentials with AI-powered job matching to transform your career journey.',
-    vi: 'Trải nghiệm nền tảng cách mạng kết hợp chứng chỉ được xác minh bằng blockchain với công nghệ kết nối việc làm bằng AI để thay đổi hành trình sự nghiệp của bạn.',
-  },
-  search: {
-    en: 'Search',
-    vi: 'Tìm kiếm',
-  },
-  jobsAvailable: {
-    en: '10,000+ Jobs Available',
-    vi: '10,000+ Việc Làm Có Sẵn',
-  },
-  topCompanies: {
-    en: '500+ Top Companies',
-    vi: '500+ Công Ty Hàng Đầu',
-  },
-  english: {
-    en: 'EN',
-    vi: 'EN',
-  },
-  vietnamese: {
-    en: 'VI',
-    vi: 'VI',
-  },
-  home: {
-    en: 'Home',
-    vi: 'Trang chủ',
-  },
-  signIn: {
-    en: 'Sign In',
-    vi: 'Đăng nhập',
-  },
-  joinNow: {
-    en: 'Join Now',
-    vi: 'Tham gia ngay',
+// Create the context with an initial value
+const LanguageContext = createContext<LanguageContextType>({
+  language: "vi",
+  setLanguage: () => {},
+  t: (key: string) => key,
+});
+
+// Define translations
+const translations = {
+  en: {
+    // Common
+    home: "Home",
+    jobs: "Jobs",
+    employers: "Employers",
+    candidates: "Candidates",
+    login: "Login",
+    register: "Register",
+    logOut: "Log Out",
+    search: "Search",
+    manage: "Manage",
+    explore: "Explore",
+    findJobs: "Find Jobs",
+    myProfile: "My Profile",
+    settings: "Settings",
+    review: "Review",
+    applications: "Applications",
+    viewAllApplications: "View All Applications",
+    viewAllJobs: "View All Jobs",
+    viewAllActivities: "View All Activities",
+    management: "Management",
+    dashboard: "Dashboard",
+    companyProfile: "Company Profile",
+    backToMain: "Back to Main Site",
+    days: "days",
+    lastWeek: "last week",
+    hoursAgo: "hours ago",
+    dayAgo: "day ago",
+    
+    // Hero section
+    heroTitle: "Find Your Dream Job",
+    heroSubtitle: "Connect with top employers and discover opportunities that match your skills and aspirations.",
+    heroAction: "Get Started",
+    heroSearchPlaceholder: "Search for jobs, skills, or companies",
+    
+    // Features section
+    featuresTitle: "Why Choose JobConnect",
+    featuresSubtitle: "The platform that connects talent with opportunity",
+    featuresCardOneTitle: "Smart Job Matching",
+    featuresCardOneDesc: "Our AI-powered matching system connects you with jobs that fit your skills and preferences.",
+    featuresCardTwoTitle: "Professional Network",
+    featuresCardTwoDesc: "Build your professional network and connect with industry leaders.",
+    featuresCardThreeTitle: "Career Growth",
+    featuresCardThreeDesc: "Access resources and tools to develop your skills and advance your career.",
+    
+    // CTA section
+    ctaEmployersTitle: "For Employers",
+    ctaEmployersSubtitle: "Find the right talent for your team",
+    ctaEmployersDesc: "Post jobs, search candidates, and build your employer brand on JobConnect.",
+    ctaEmployersButton: "Post a Job",
+    ctaCandidatesTitle: "For Job Seekers",
+    ctaCandidatesSubtitle: "Discover your next opportunity",
+    ctaCandidatesDesc: "Search jobs, build your profile, and connect with employers on JobConnect.",
+    ctaCandidatesButton: "Create Profile",
+    
+    // Jobs section
+    recentJobs: "Recent Jobs",
+    recentJobsDesc: "Explore the latest job opportunities across various industries",
+    jobLocation: "Location",
+    jobType: "Job Type",
+    jobSalary: "Salary",
+    jobPosted: "Posted",
+    jobApply: "Apply Now",
+    jobDetails: "View Details",
+    jobFilters: "Filters",
+    jobSearch: "Job Search",
+    jobSearchPlaceholder: "Job title, keyword, or company",
+    
+    // Candidate Portal
+    candidatePortal: "Candidate Portal",
+    candidateWelcome: "Welcome to Your Candidate Dashboard",
+    candidateWelcomeDesc: "Manage your job applications, update your profile, and discover new opportunities",
+    candidateFeatures: "What You Can Do",
+    candidateFeaturesDesc: "Explore all the features available to help advance your career",
+    
+    candidateJobSearch: "Job Search",
+    candidateJobSearchDesc: "Find and apply to jobs that match your skills and experience",
+    candidateProfile: "Profile Management",
+    candidateProfileDesc: "Build and maintain your professional profile to stand out to employers",
+    candidateApplications: "Application Tracking",
+    candidateApplicationsDesc: "Track the status of your job applications and interviews",
+    candidateMessages: "Messages",
+    candidateMessagesDesc: "Communicate with recruiters and network with professionals",
+    
+    applicationTips: "Application Tips",
+    tipTimelyApply: "Apply Early",
+    tipTimelyApplyDesc: "Be among the first to apply to increase your chances of getting noticed",
+    tipTailorResume: "Tailor Your Resume",
+    tipTailorResumeDesc: "Customize your resume and cover letter for each job application",
+    tipFollowUp: "Follow Up",
+    tipFollowUpDesc: "Send a follow-up message after applying to show your continued interest",
+    
+    readyToApply: "Ready to Find Your Next Opportunity?",
+    readyToApplyDesc: "Browse thousands of jobs from top employers",
+    browseOpenings: "Browse Job Openings",
+    
+    // Recruiter Portal
+    recruiterPortal: "Recruiter Portal",
+    recruiterDashboard: "Recruiter Dashboard",
+    recruiterActivities: "Activities",
+    
+    recruiterJobManagement: "Job Management",
+    recruiterJobManagementDesc: "Post, edit, and manage job listings",
+    recruiterCandidates: "Candidate Management",
+    recruiterCandidatesDesc: "Review and track applicants",
+    recruiterCompanyProfile: "Company Profile",
+    recruiterCompanyProfileDesc: "Manage your company's presence",
+    recruiterTalentSearch: "Talent Search",
+    recruiterTalentSearchDesc: "Find qualified candidates",
+    
+    activeJobs: "Active Jobs",
+    activeJobsDesc: "Currently open positions at your company",
+    newApplications: "New Applications",
+    candidatesShortlisted: "Candidates Shortlisted",
+    averageTimeToHire: "Average Time to Hire",
+    
+    keyMetrics: "Key Metrics",
+    quickAccess: "Quick Access",
+    recentActivity: "Recent Activity",
+    latestActivitiesDesc: "Your recent activities on the platform",
+    
+    newCandidateApplied: "New Candidate Applied",
+    newCandidateAppliedDesc: "John Doe applied for Senior React Developer position",
+    jobPostingViewed: "Job Posting Viewed",
+    jobPostingViewedDesc: "Your UX/UI Designer job posting received 45 views",
+    jobEdited: "Job Posting Edited",
+    jobEditedDesc: "You updated the Marketing Specialist position details",
+    
+    recentApplications: "Recent Applications",
+    recentApplicationsDesc: "Latest candidates who applied to your job postings",
+    
+    postJob: "Post Job",
+    
+    // Login/Register
+    emailAddress: "Email Address",
+    password: "Password",
+    confirmPassword: "Confirm Password",
+    forgotPassword: "Forgot Password?",
+    dontHaveAccount: "Don't have an account?",
+    alreadyHaveAccount: "Already have an account?",
+    signUpNow: "Sign Up Now",
+    signInNow: "Sign In Now",
+    signInWithGoogle: "Sign in with Google",
+    signInWithMetaMask: "Sign in with MetaMask",
+    signUpWithGoogle: "Sign up with Google",
+    signUpWithMetaMask: "Sign up with MetaMask",
+    orSignInWith: "or sign in with email",
+    orSignUpWith: "or sign up with email",
+    fullName: "Full Name",
+    createAccount: "Create Account",
+    agreeToTerms: "I agree to the Terms of Service and Privacy Policy",
+    
+    // Errors and success messages
+    errorRequired: "This field is required",
+    errorEmail: "Please enter a valid email",
+    errorPassword: "Password must be at least 6 characters",
+    errorPasswordMatch: "Passwords do not match",
+    successLogin: "Login successful",
+    successRegistration: "Registration successful",
+    welcomeBack: "Welcome back!",
+    connectingGoogle: "Connecting to Google",
+    pleaseWait: "Please wait a moment...",
+    loginSuccessGoogle: "Successfully logged in with Google!",
+    connectingMetaMask: "Connecting to MetaMask",
+    confirmInWallet: "Please confirm in your MetaMask wallet...",
+    loginSuccessMetaMask: "Successfully logged in with MetaMask!",
+  },
+  vi: {
+    // Common
+    home: "Trang chủ",
+    jobs: "Việc làm",
+    employers: "Nhà tuyển dụng",
+    candidates: "Ứng viên",
+    login: "Đăng nhập",
+    register: "Đăng ký",
+    logOut: "Đăng xuất",
+    search: "Tìm kiếm",
+    manage: "Quản lý",
+    explore: "Khám phá",
+    findJobs: "Tìm việc làm",
+    myProfile: "Hồ sơ của tôi",
+    settings: "Cài đặt",
+    review: "Xem xét",
+    applications: "Đơn ứng tuyển",
+    viewAllApplications: "Xem tất cả đơn ứng tuyển",
+    viewAllJobs: "Xem tất cả việc làm",
+    viewAllActivities: "Xem tất cả hoạt động",
+    management: "Quản lý",
+    dashboard: "Bảng điều khiển",
+    companyProfile: "Hồ sơ công ty",
+    backToMain: "Quay lại trang chính",
+    days: "ngày",
+    lastWeek: "tuần trước",
+    hoursAgo: "giờ trước",
+    dayAgo: "ngày trước",
+    
+    // Hero section
+    heroTitle: "Tìm Công Việc Mơ Ước Của Bạn",
+    heroSubtitle: "Kết nối với các nhà tuyển dụng hàng đầu và khám phá cơ hội phù hợp với kỹ năng và nguyện vọng của bạn.",
+    heroAction: "Bắt Đầu",
+    heroSearchPlaceholder: "Tìm kiếm việc làm, kỹ năng hoặc công ty",
+    
+    // Features section
+    featuresTitle: "Tại Sao Chọn JobConnect",
+    featuresSubtitle: "Nền tảng kết nối tài năng với cơ hội",
+    featuresCardOneTitle: "Kết Nối Việc Làm Thông Minh",
+    featuresCardOneDesc: "Hệ thống kết nối thông minh của chúng tôi sẽ gợi ý những công việc phù hợp với kỹ năng và sở thích của bạn.",
+    featuresCardTwoTitle: "Mạng Lưới Chuyên Nghiệp",
+    featuresCardTwoDesc: "Xây dựng mạng lưới chuyên nghiệp và kết nối với những người dẫn đầu trong ngành.",
+    featuresCardThreeTitle: "Phát Triển Nghề Nghiệp",
+    featuresCardThreeDesc: "Tiếp cận các tài nguyên và công cụ để phát triển kỹ năng và thăng tiến trong sự nghiệp.",
+    
+    // CTA section
+    ctaEmployersTitle: "Dành Cho Nhà Tuyển Dụng",
+    ctaEmployersSubtitle: "Tìm kiếm nhân tài phù hợp cho đội ngũ của bạn",
+    ctaEmployersDesc: "Đăng tin tuyển dụng, tìm kiếm ứng viên và xây dựng thương hiệu tuyển dụng trên JobConnect.",
+    ctaEmployersButton: "Đăng Tin Tuyển Dụng",
+    ctaCandidatesTitle: "Dành Cho Người Tìm Việc",
+    ctaCandidatesSubtitle: "Khám phá cơ hội tiếp theo của bạn",
+    ctaCandidatesDesc: "Tìm kiếm việc làm, xây dựng hồ sơ và kết nối với nhà tuyển dụng trên JobConnect.",
+    ctaCandidatesButton: "Tạo Hồ Sơ",
+    
+    // Jobs section
+    recentJobs: "Việc Làm Gần Đây",
+    recentJobsDesc: "Khám phá các cơ hội việc làm mới nhất trong nhiều ngành khác nhau",
+    jobLocation: "Địa điểm",
+    jobType: "Loại công việc",
+    jobSalary: "Mức lương",
+    jobPosted: "Đăng tải",
+    jobApply: "Ứng Tuyển Ngay",
+    jobDetails: "Xem Chi Tiết",
+    jobFilters: "Bộ lọc",
+    jobSearch: "Tìm kiếm việc làm",
+    jobSearchPlaceholder: "Chức danh, từ khóa hoặc công ty",
+    
+    // Candidate Portal
+    candidatePortal: "Cổng Thông Tin Ứng Viên",
+    candidateWelcome: "Chào mừng đến với Bảng Điều Khiển Ứng Viên",
+    candidateWelcomeDesc: "Quản lý đơn ứng tuyển, cập nhật hồ sơ và khám phá cơ hội mới",
+    candidateFeatures: "Những Gì Bạn Có Thể Làm",
+    candidateFeaturesDesc: "Khám phá tất cả các tính năng có sẵn để giúp thăng tiến trong sự nghiệp",
+    
+    candidateJobSearch: "Tìm Kiếm Việc Làm",
+    candidateJobSearchDesc: "Tìm và ứng tuyển vào các công việc phù hợp với kỹ năng và kinh nghiệm của bạn",
+    candidateProfile: "Quản Lý Hồ Sơ",
+    candidateProfileDesc: "Xây dựng và duy trì hồ sơ chuyên nghiệp để nổi bật với nhà tuyển dụng",
+    candidateApplications: "Theo Dõi Đơn Ứng Tuyển",
+    candidateApplicationsDesc: "Theo dõi trạng thái của các đơn ứng tuyển và phỏng vấn",
+    candidateMessages: "Tin Nhắn",
+    candidateMessagesDesc: "Liên lạc với nhà tuyển dụng và kết nối với các chuyên gia",
+    
+    applicationTips: "Mẹo Ứng Tuyển",
+    tipTimelyApply: "Ứng Tuyển Sớm",
+    tipTimelyApplyDesc: "Hãy là một trong những người đầu tiên ứng tuyển để tăng cơ hội được chú ý",
+    tipTailorResume: "Tùy Chỉnh CV",
+    tipTailorResumeDesc: "Điều chỉnh CV và thư xin việc cho từng đơn ứng tuyển",
+    tipFollowUp: "Theo Dõi",
+    tipFollowUpDesc: "Gửi tin nhắn theo dõi sau khi ứng tuyển để thể hiện sự quan tâm liên tục",
+    
+    readyToApply: "Sẵn Sàng Tìm Cơ Hội Tiếp Theo?",
+    readyToApplyDesc: "Duyệt qua hàng ngàn việc làm từ các nhà tuyển dụng hàng đầu",
+    browseOpenings: "Duyệt Qua Các Vị Trí Tuyển Dụng",
+    
+    // Recruiter Portal
+    recruiterPortal: "Cổng Thông Tin Nhà Tuyển Dụng",
+    recruiterDashboard: "Bảng Điều Khiển Nhà Tuyển Dụng",
+    recruiterActivities: "Hoạt Động",
+    
+    recruiterJobManagement: "Quản Lý Việc Làm",
+    recruiterJobManagementDesc: "Đăng, chỉnh sửa và quản lý danh sách việc làm",
+    recruiterCandidates: "Quản Lý Ứng Viên",
+    recruiterCandidatesDesc: "Xem xét và theo dõi người ứng tuyển",
+    recruiterCompanyProfile: "Hồ Sơ Công Ty",
+    recruiterCompanyProfileDesc: "Quản lý sự hiện diện của công ty bạn",
+    recruiterTalentSearch: "Tìm Kiếm Nhân Tài",
+    recruiterTalentSearchDesc: "Tìm ứng viên đủ điều kiện",
+    
+    activeJobs: "Việc Làm Đang Hoạt Động",
+    activeJobsDesc: "Các vị trí đang mở tại công ty của bạn",
+    newApplications: "Đơn Ứng Tuyển Mới",
+    candidatesShortlisted: "Ứng Viên Vào Danh Sách Ngắn",
+    averageTimeToHire: "Thời Gian Tuyển Dụng Trung Bình",
+    
+    keyMetrics: "Số Liệu Chính",
+    quickAccess: "Truy Cập Nhanh",
+    recentActivity: "Hoạt Động Gần Đây",
+    latestActivitiesDesc: "Các hoạt động gần đây của bạn trên nền tảng",
+    
+    newCandidateApplied: "Ứng Viên Mới Đã Ứng Tuyển",
+    newCandidateAppliedDesc: "John Doe đã ứng tuyển vào vị trí Senior React Developer",
+    jobPostingViewed: "Tin Tuyển Dụng Được Xem",
+    jobPostingViewedDesc: "Tin tuyển dụng UX/UI Designer của bạn đã nhận 45 lượt xem",
+    jobEdited: "Tin Tuyển Dụng Được Chỉnh Sửa",
+    jobEditedDesc: "Bạn đã cập nhật chi tiết vị trí Marketing Specialist",
+    
+    recentApplications: "Đơn Ứng Tuyển Gần Đây",
+    recentApplicationsDesc: "Các ứng viên mới nhất đã ứng tuyển vào tin tuyển dụng của bạn",
+    
+    postJob: "Đăng Tin Tuyển Dụng",
+    
+    // Login/Register
+    emailAddress: "Địa chỉ Email",
+    password: "Mật khẩu",
+    confirmPassword: "Xác nhận Mật khẩu",
+    forgotPassword: "Quên mật khẩu?",
+    dontHaveAccount: "Chưa có tài khoản?",
+    alreadyHaveAccount: "Đã có tài khoản?",
+    signUpNow: "Đăng ký ngay",
+    signInNow: "Đăng nhập ngay",
+    signInWithGoogle: "Đăng nhập với Google",
+    signInWithMetaMask: "Đăng nhập với MetaMask",
+    signUpWithGoogle: "Đăng ký với Google",
+    signUpWithMetaMask: "Đăng ký với MetaMask",
+    orSignInWith: "hoặc đăng nhập với email",
+    orSignUpWith: "hoặc đăng ký với email",
+    fullName: "Họ và Tên",
+    createAccount: "Tạo Tài Khoản",
+    agreeToTerms: "Tôi đồng ý với Điều khoản Dịch vụ và Chính sách Bảo mật",
+    
+    // Errors and success messages
+    errorRequired: "Trường này là bắt buộc",
+    errorEmail: "Vui lòng nhập một địa chỉ email hợp lệ",
+    errorPassword: "Mật khẩu phải có ít nhất 6 ký tự",
+    errorPasswordMatch: "Mật khẩu không khớp",
+    successLogin: "Đăng nhập thành công",
+    successRegistration: "Đăng ký thành công",
+    welcomeBack: "Chào mừng bạn quay trở lại!",
+    connectingGoogle: "Đang kết nối với Google",
+    pleaseWait: "Vui lòng đợi trong giây lát...",
+    loginSuccessGoogle: "Đã đăng nhập với Google!",
+    connectingMetaMask: "Đang kết nối với MetaMask",
+    confirmInWallet: "Vui lòng xác nhận trong ví MetaMask của bạn...",
+    loginSuccessMetaMask: "Đã đăng nhập với MetaMask!",
   },
 };
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+// Create a provider component for the language context
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [language, setLanguage] = useState<string>("vi");
 
-export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>((localStorage.getItem('language') as Language) || 'en');
-
-  // Update localStorage when language changes
-  React.useEffect(() => {
-    localStorage.setItem('language', language);
-  }, [language]);
-
-  const t = useMemo(() => {
-    return (key: string) => {
-      if (!translations[key]) {
-        console.warn(`Translation key not found: ${key}`);
-        return key;
-      }
-      return translations[key][language];
-    };
-  }, [language]);
+  // Create a translation function that returns the correct string based on the current language
+  const t = (key: string) => {
+    if (!translations[language as keyof typeof translations]) {
+      return key;
+    }
+    
+    const langDict = translations[language as keyof typeof translations];
+    return langDict[key as keyof typeof langDict] || key;
+  };
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
@@ -595,10 +374,11 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   );
 };
 
-export const useLanguage = (): LanguageContextType => {
+// Custom hook to use the language context
+export const useLanguage = () => {
   const context = useContext(LanguageContext);
-  if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+  if (!context) {
+    throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;
 };
