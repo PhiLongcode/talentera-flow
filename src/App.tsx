@@ -13,6 +13,7 @@ import Candidate from "./pages/Candidate";
 import Recruiter from "./pages/Recruiter";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import CreateJob from "./pages/CreateJob";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/recruiter" element={<Recruiter />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/create-job" element={<CreateJob />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
